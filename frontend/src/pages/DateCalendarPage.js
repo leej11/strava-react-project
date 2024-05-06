@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import BasicDateCalendar from "../components/BasicDateCalendar";
 
 function DateCalendarPage() {

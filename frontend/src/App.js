@@ -1,17 +1,50 @@
 import React, { useContext, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+// components
 import Navbar from "./components/Navbar";
-import ActivitiesContextProvider from "./context/ActivityContext";
-import MonthlyDistancesContextProvider from "./context/MonthlyDistancesContext";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-// If you are using date-fns v3.x, please import the v3 adapter
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+// pages
+import Home from "./pages/Home";
 import DateCalendarPage from "./pages/DateCalendarPage";
+
+// contexts
 import { ActivitiesContext } from "./context/ActivityContext";
 import { MonthlyDistancesContext } from "./context/MonthlyDistancesContext";
 
 function App() {
+  const { dispatch: activitiesDispatch } = useContext(ActivitiesContext);
+  const { dispatch: monthlyDispatch } = useContext(MonthlyDistancesContext);
+
+  // This will run once upon load, and get all the activities. Currently
+  // it's just logging the activities to the console.
+  // we want instead to put it into state, so that it can be interacted with
+  // and displayed
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const response = await fetch("/api/activities");
+      const json = await response.json();
+
+      if (response.ok) {
+        activitiesDispatch({ type: "SET_ACTIVITIES", payload: json });
+        console.log("Successful dispatch of activities data:", json);
+      }
+    };
+
+    const fetchMonthlyDistances = async () => {
+      const response = await fetch("/api/activities/monthlyDistances");
+      const json = await response.json();
+
+      if (response.ok) {
+        monthlyDispatch({ type: "SET_MONTHLY_DISTANCES", payload: json });
+        console.log("Successful dispatch of monthly distances data:", json);
+
+        // window.monthlyDistances = json;
+      }
+    };
+
+    fetchActivities();
+    fetchMonthlyDistances();
+  }, []);
+
   return (
     <div
       className="App"
@@ -22,19 +55,13 @@ function App() {
         height: "100vh",
       }}
     >
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <ActivitiesContextProvider>
-          <MonthlyDistancesContextProvider>
-            <Router>
-              <Navbar></Navbar>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/calendar" element={<DateCalendarPage />} />
-              </Routes>
-            </Router>
-          </MonthlyDistancesContextProvider>
-        </ActivitiesContextProvider>
-      </LocalizationProvider>
+      <Router>
+        <Navbar></Navbar>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/calendar" element={<DateCalendarPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
