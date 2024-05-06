@@ -12,9 +12,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.8",
+    "convict": "^6.2.4",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "nodemon": "^3.1.0",
-    "pg": "^8.11.5"
+    "opener": "^1.5.2",
+    "pg": "^8.11.5",
+    "strava-v3": "^2.2.0"
   }
 }

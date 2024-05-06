@@ -3,11 +3,35 @@ const db = require("../db");
 const getActivities = async (req, res) => {
   try {
     const result = await db.query(
-      "SELECT * FROM activity WHERE totaldistance > 10000"
+      "SELECT * FROM activity WHERE startdate >= date_trunc('month', CURRENT_DATE - interval '1 month') ORDER BY startdate DESC LIMIT 3;"
     );
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
   }
+};
+
+const getMonthlyDistances = async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT 
+	        DATE_TRUNC('month', startdate) as MONTH_DT,
+	        TRIM(TO_CHAR(DATE_TRUNC('month', startdate), 'Month')) || ' ' || TRIM(TO_CHAR(DATE_TRUNC('month', startdate), 'YYYY')) AS year_name,
+	        sum(totaldistance)
+        FROM public.activity
+        group by 1,2
+        order by 1 asc
+        ;`
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal server error");
+  }
+};
+
+module.exports = {
+  getActivities,
+  getMonthlyDistances,
 };

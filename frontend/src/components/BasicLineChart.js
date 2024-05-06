@@ -2,26 +2,51 @@ import Plot from "react-plotly.js";
 
 import React from "react";
 
-function BarChart() {
+function BarChart({ data }) {
+  const x_vals = data.map((row) => row.year_name);
+  const y_vals = data.map((row) => row.sum);
+  console.log(x_vals);
+  console.log(y_vals);
   return (
     <Plot
       data={[
         {
-          x: ["January", "February", "March", "April"],
-          y: [57.8, 41.5, 84.5, 36],
+          x: x_vals,
+          y: y_vals,
+          // x: ["January", "February", "March", "April"],
+          // y: [57.8, 41.5, 84.5, 36],
           type: "bar",
+          marker: {
+            // Specify the bar color
+            color: "rgb(113, 230, 202)", // Neon pastel green
+          },
         },
       ]}
       layout={{
         title: "My Monthly Running",
+        margin: {
+          b: 150,
+          pad: 0,
+        },
         xaxis: {
           title: "Month",
+          linecolor: "#ffffff", // White
+          tickcolor: "#ffffff", // White
+          tickangle: -70,
+          dtick: 3,
         },
         yaxis: {
           title: "Distance (km)",
+          linecolor: "#ffffff", // White
+          tickcolor: "#ffffff", // White
         },
-        width: 600,
-        height: 500,
+        width: "100%",
+        // height: "100%",
+        plot_bgcolor: "#343434",
+        // Specify font color
+        // font: { color: "#D8D8D8" }, // Off-white grey
+        paper_bgcolor: "#343434",
+        font: { color: "#ffffff" }, // White
       }}
     />
   );

@@ -13,7 +13,7 @@ export const activitiesReducer = (state, action) => {
   }
 };
 
-export const activitiesContextProvider = ({ children }) => {
+export const ActivitiesContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(activitiesReducer, { activities: null });
 
   return (
@@ -22,3 +22,5 @@ export const activitiesContextProvider = ({ children }) => {
     </ActivitiesContext.Provider>
   );
 };
+
+export default ActivitiesContextProvider;

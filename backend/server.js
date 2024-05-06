@@ -7,6 +7,8 @@ const activityRoutes = require("./routes/activities");
 const app = express();
 
 // middleware
+// this middleware function parses incoming request with JSON payloads
+// and makes the parsed JSON available in `req.body`
 app.use(express.json());
 
 app.use((req, res, next) => {

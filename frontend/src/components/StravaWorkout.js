@@ -1,11 +1,12 @@
 import React from "react";
+import { formatDistanceToNow, formatDate } from "date-fns";
 
-const StravaWorkout = ({ workout }) => {
+const StravaWorkout = ({ activity }) => {
   return (
     <div className="strava-workout">
-      <h4>Title: {workout.title}</h4>
-      <p>Date: {workout.date}</p>
-      <p>Distance (km): {workout.distance}</p>
+      <h4>{formatDate(activity.startdate, "EEEE, do MMMM yyyy, h:mma")}</h4>
+      <p>{formatDistanceToNow(activity.startdate, { addSuffix: true })}</p>
+      <p>Distance: {(activity.totaldistance / 1000).toFixed(1) + "K"}</p>
     </div>
   );
 };

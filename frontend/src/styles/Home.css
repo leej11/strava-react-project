@@ -1,36 +1,76 @@
-.home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* justify-content: center; */
-    height: 100vh;
-    width: 100%;
+ {
+background-color: #343434;
 }
 
-.home h3 {
-    font-size: 50px;
+.home {
+    display: flex;
+    justify-content: space-evenly;
+    height: 200vh;
+    width: 100%;
+    background-color: #343434;
+    color: #fff
+
+}
+
+.home h1 {
     text-align: left;
-    width: 50%;
 }
 
 .home p {
-    width: 50%;
+    /* width: 50%; */
     /* margin: 20px auto; */
 }
 
+.container {
+    width: 80%;
+    /* height: 700px; */
+    /* margin: 20px auto; */
+    /* padding-top: 20px; */
+    flex-wrap: wrap;
+    border: 10px solid blue;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.item {
+    flex: 1;
+    /* min-width: 600px; */
+    /* width: 150px; */
+    /* height: 150px; */
+    /* background-color: #fb7185; */
+    padding: 1em;
+    font-weight: 700;
+    /* color: var(--clr-light); */
+    text-align: center;
+
+    box-shadow: 0.1px 2px 2px 3px rgba(135, 135, 135, 0.1);
+    border-radius: 10px;
+    margin: 10px;
+}
+
+
 .strava-workout {
     display: flex;
-    width: 40%;
+    width: 100%;
     flex-direction: column;
     /* align-items: center; */
     /* justify-content: flex-start; */
     align-items: flex-start;
-    border-radius: 4px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    /* margin: 20px auto; */
+    border-radius: 7px;
+    box-shadow:  2px 2px 2px 2px rgba(135, 135, 135, 0.2);
+    /* padding: 20px; */
+    margin: 20px auto;
 }
 
-.strava-workout h4 {
-    
+.strava-workout:hover {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: flex-start; */
+    align-items: flex-start;
+    border-radius: 7px;
+    box-shadow: 2px 2px 2px 2px rgb(113, 230, 202, 0.2);
+    /* padding: 20px; */
+    margin: 20px auto;
 }
