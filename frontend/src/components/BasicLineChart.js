@@ -3,8 +3,8 @@ import Plot from "react-plotly.js";
 import React from "react";
 
 function BarChart({ data }) {
-  const x_vals = data.map((row) => row.year_name);
-  const y_vals = data.map((row) => row.sum);
+  const x_vals = data.map((item) => item.yearmonth.trim());
+  const y_vals = data.map((item) => parseFloat(item.total_distance));
   console.log(x_vals);
   console.log(y_vals);
   return (
@@ -30,10 +30,11 @@ function BarChart({ data }) {
         },
         xaxis: {
           title: "Month",
+          tickformat: "%b %y", // Format to show month and year
+          tickangle: -70,
+          dtick: "M3", // Set ticks every 3 months
           linecolor: "#ffffff", // White
           tickcolor: "#ffffff", // White
-          tickangle: -70,
-          dtick: 3,
         },
         yaxis: {
           title: "Distance (km)",

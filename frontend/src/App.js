@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // components
 import Navbar from "./components/Navbar";
+import AuthHandler from "./components/AuthHandler";
+
 // pages
 import Home from "./pages/Home";
 import DateCalendarPage from "./pages/DateCalendarPage";
@@ -17,7 +19,7 @@ function App() {
   // This will run once upon load, and get all the activities. Currently
   // it's just logging the activities to the console.
   // we want instead to put it into state, so that it can be interacted with
-  // and displayed
+  // and displayed00
   useEffect(() => {
     const fetchActivities = async () => {
       const response = await fetch("/api/activities");
@@ -60,6 +62,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/calendar" element={<DateCalendarPage />} />
+          <Route path="/redirect" element={<AuthHandler />} />
         </Routes>
       </Router>
     </div>

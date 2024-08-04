@@ -1,20 +1,102 @@
+require("dotenv").config();
 const axios = require("axios");
+const { getAccessToken, upsertActivities, query } = require("../db");
 
-const headers = {
-  Authorization: "Bearer 28d79149abb3b7457c0c4f104ccc81e80d516b43",
+const redirectUri = "http://localhost:3001/api/activities/callback"; // Ensure this matches the redirect URI registered with Strava
+
+// Redirect users to Strava authorization URL
+const runStravaAuth = (req, res) => {
+  console.log("Attempting to redirect to Strava Auth", stravaAuthUrl);
+  const stravaAuthUrl = `https://www.strava.com/oauth/authorize?client_id=${
+    process.env.CLIENT_ID
+  }&response_type=code&redirect_uri=${encodeURIComponent(
+    redirectUri
+  )}&approval_prompt=force&scope=read,activity:read_all`;
+
+  res.redirect(stravaAuthUrl);
+};
+
+const stravaCallback = async (req, res) => {
+  console.log(req.query);
+  const code = req.query.code; // Strava sends the authorization code as a query parameter
+  try {
+    const response = await axios.post("https://www.strava.com/oauth/token", {
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      code: code,
+      grant_type: "authorization_code",
+      redirect_uri: redirectUri,
+    });
+
+    const accessToken = response.data.access_token;
+    const refreshToken = response.data.refresh_token;
+    // Store these tokens securely and use them to make API calls
+    res.send("Authorization successful, tokens are stored securely");
+  } catch (error) {
+    console.error("Error in token exchange:", error);
+    res.status(500).send("Authorization error");
+  }
+};
+
+const getStravaAggregatedData = async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT
+        TO_CHAR(start_date, 'YYYY-MM') AS yearmonth,
+        SUM(distance) AS total_distance
+      FROM
+        activities
+      GROUP BY
+        TO_CHAR(start_date, 'YYYY-MM')
+      ORDER BY
+        TO_CHAR(start_date, 'YYYY-MM');
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error executing query", error.stack);
+    res.status(500).send("Error executing query");
+  }
 };
 
 const getStravaActivities = async (req, res) => {
   try {
-    const response = await axios.get(
-      "https://www.strava.com/api/v3/athlete/activities",
-      { headers }
-    );
-    const activities = response.data; // Extracting data from the response
+    const accessToken = await getAccessToken("19160049");
+    console.log(`Liams accessToken: ${accessToken}`);
 
-    console.log(activities); // Logging the extracted data to the console
+    let page = 1;
+    const perPage = 100; // Strava API's maximum per_page value is 200
+    let allActivities = [];
+    let moreActivities = true;
 
-    res.status(200).json(activities); // Sending the extracted data in the response
+    while (moreActivities) {
+      const response = await axios.get(
+        "https://www.strava.com/api/v3/athlete/activities",
+        {
+          params: {
+            page: page,
+            per_page: perPage,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const activities = response.data;
+
+      if (activities.length > 0) {
+        allActivities = allActivities.concat(activities);
+        page += 1;
+      } else {
+        moreActivities = false;
+      }
+    }
+
+    // Upsert all activities into the database in a single batch
+    await upsertActivities(allActivities);
+
+    res.status(200).json(allActivities); // Sending the extracted data in the response
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -23,4 +105,7 @@ const getStravaActivities = async (req, res) => {
 
 module.exports = {
   getStravaActivities,
+  getStravaAggregatedData,
+  runStravaAuth,
+  stravaCallback,
 };
