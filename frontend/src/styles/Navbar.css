@@ -1,7 +1,7 @@
 .navbar {
     width: 100%;
     height: 100px;
-    background: #343434;
+    background: #1d1e20;
 }
 
 .links {
@@ -9,14 +9,20 @@
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content:space-between;
     color: #FDE9C9;
-    
+    margin-left: 10vw;
 }
+
+#authButton {float: right; margin-right: 20vw;}
 
 .navbar a {
     color: white;
     text-decoration: none;
     margin: 20px;
     font-size: 25px;
+}
+
+.button {
+    
 }

@@ -60,16 +60,11 @@ function Home() {
 
   return (
     <div className="home">
-      <AuthorizationButton />
-      {authDetails && <p>Access Token: {authDetails.access_token}</p>}
+      {/* <AuthorizationButton /> */}
       <div className="container">
         <div className="item">
           <h1>Monthly Distance</h1>
-          <p>
-            This is the total distance I ran for each month km. My next task
-            will be to store this in a DB where I can pull it in via API instead
-            of just hardcoding it at the moment haha.
-          </p>
+          <p>This is the total distance I ran for each month km.</p>
           {monthlyDistances && <BarChart data={monthlyDistances} />}
         </div>
         <div className="item">

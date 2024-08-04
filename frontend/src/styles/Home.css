@@ -27,7 +27,7 @@ background-color: #343434;
     /* margin: 20px auto; */
     /* padding-top: 20px; */
     flex-wrap: wrap;
-    border: 10px solid blue;
+    /* border: 10px solid blue; */
     display: flex;
     justify-content: space-evenly;
 }

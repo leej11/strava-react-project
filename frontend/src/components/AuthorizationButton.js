@@ -14,7 +14,9 @@ function AuthorizationButton() {
 
   return (
     <div>
-      <button onClick={handleAuth}>Authorize with Strava</button>
+      <button id="authButton" onClick={handleAuth}>
+        Authorize with Strava
+      </button>
     </div>
   );
 }

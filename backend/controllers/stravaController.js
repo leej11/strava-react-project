@@ -1,6 +1,12 @@
 require("dotenv").config();
 const axios = require("axios");
-const { getAccessToken, upsertActivities, query } = require("../db");
+const {
+  getAccessToken,
+  upsertActivities,
+  query,
+  updateLastFetchedTimestamp,
+  getLastFetchedTimestamp,
+} = require("../db");
 
 const redirectUri = "http://localhost:3001/api/activities/callback"; // Ensure this matches the redirect URI registered with Strava
 
@@ -60,9 +66,19 @@ const getStravaAggregatedData = async (req, res) => {
 };
 
 const getStravaActivities = async (req, res) => {
+  const userId = "19160049";
   try {
-    const accessToken = await getAccessToken("19160049");
+    const accessToken = await getAccessToken(userId);
     console.log(`Liams accessToken: ${accessToken}`);
+
+    const now = new Date();
+    const lastFetched = await getLastFetchedTimestamp(userId);
+
+    // If activities were fetched within the last 24 hours, skip fetching
+    // if (lastFetched && now - new Date(lastFetched) < 24 * 60 * 60 * 1000) {
+    //   res.status(200).send("Activities already fetched recently");
+    //   return;
+    // }
 
     let page = 1;
     const perPage = 100; // Strava API's maximum per_page value is 200
@@ -70,13 +86,20 @@ const getStravaActivities = async (req, res) => {
     let moreActivities = true;
 
     while (moreActivities) {
+      const params = {
+        page: page,
+        per_page: perPage,
+      };
+
+      // if (lastFetched) {
+      //   params.after = Math.floor(new Date(lastFetched).getTime() / 1000); // Convert to Unix timestamp
+      //   console.log(`Pulling data since last fetch: ${lastFetched}`);
+      // }
+
       const response = await axios.get(
         "https://www.strava.com/api/v3/athlete/activities",
         {
-          params: {
-            page: page,
-            per_page: perPage,
-          },
+          params: params,
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -95,6 +118,9 @@ const getStravaActivities = async (req, res) => {
 
     // Upsert all activities into the database in a single batch
     await upsertActivities(allActivities);
+
+    // Update the last fetched timestamp
+    await updateLastFetchedTimestamp(userId, now);
 
     res.status(200).json(allActivities); // Sending the extracted data in the response
   } catch (error) {

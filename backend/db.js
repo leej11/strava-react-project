@@ -99,6 +99,21 @@ const getAccessToken = async (userId) => {
   }
 };
 
+const updateLastFetchedTimestamp = async (userId, timestamp) => {
+  await pool.query(
+    "UPDATE user_tokens SET last_fetched = $1 WHERE userid = $2",
+    [timestamp, userId]
+  );
+};
+
+const getLastFetchedTimestamp = async (userId) => {
+  const result = await pool.query(
+    "SELECT last_fetched FROM user_tokens WHERE userid = $1",
+    [userId]
+  );
+  return result.rows[0]?.last_fetched;
+};
+
 const upsertActivities = async (activities) => {
   if (activities.length === 0) return;
 
@@ -264,6 +279,8 @@ module.exports = {
   query,
   upsertActivities,
   getAccessToken,
+  updateLastFetchedTimestamp,
+  getLastFetchedTimestamp,
 };
 // module.exports = {
 //   query: (text, params) => pool.query(text, params),
